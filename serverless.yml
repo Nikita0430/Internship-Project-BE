@@ -1,0 +1,30 @@
+service: webociti
+
+provider:
+    name: aws
+    region: us-west-1
+
+plugins:
+    - ./vendor/bref/bref
+
+functions:
+    webociti:
+        name: webociti-usw1-laravel-function
+        handler: public/index.php
+        environment:
+            LOG_CHANNEL: stderr
+            SESSION_DRIVER: array
+            CACHE_DRIVER: array
+        description: ''
+        runtime: php-82-fpm
+        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+        layers:
+          - ${bref:layer.php-80-fpm}
+        events:
+          - httpApi: '*'
+
+# Exclude files from deployment
+package:
+    patterns:
+        - '!node_modules/**'
+        - '!tests/**'
